@@ -1,0 +1,23 @@
+cff-version: 1.2.0
+message: "If you use this code, please cite it as below."
+title: "A glucose–HbA1c distribution law for monitoring glycaemic control in diabetes: analysis code"
+authors:
+  - family-names: Tran
+    given-names: Huy Quoc
+  - family-names: Vo
+    given-names: Khanh Trieu
+  - family-names: Tran
+    given-names: Linh Quy Phuong
+  - family-names: Tran
+    given-names: Nhien Thi Hong
+  - family-names: Nguyen
+    given-names: Chau Huu
+  - family-names: Le
+    given-names: Hoang Thi Kim
+  - family-names: Lam
+    given-names: Thanh Kien
+    email: thanh.lk@vlu.edu.vn
+    affiliation: "Faculty of Medical Technology, Van Lang University"
+version: 1.0.0
+date-released: 2026-10-13
+license: MIT

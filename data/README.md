@@ -1,0 +1,2 @@
+# NHANES 2021–2023 (public domain)
+`nhanes_2021_2023_fasting.csv`: adults (≥ 18 years) in the fasting subsample of NHANES August 2021–August 2023 with fasting plasma glucose (LBXGLU, mg/dL) and HbA1c (LBXGH, %), merged from the DEMO_L, GLU_L, GHB_L, DIQ_L, CBC_L and BIOPRO_L files (National Center for Health Statistics). eGFR computed with CKD-EPI 2021. Weights: WTSAF2YR (fasting subsample). Only this cycle is used in the analysis.

@@ -1,0 +1,6 @@
+{
+  "name": "glucose-hba1c-distribution-law",
+  "private": true,
+  "description": "Builds the manuscript (.docx) from the analysis results",
+  "dependencies": { "docx": "9.6.1" }
+}
