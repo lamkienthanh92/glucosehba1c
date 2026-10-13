@@ -3,8 +3,8 @@ matplotlib.use('Agg'); import matplotlib.pyplot as plt, seaborn as sns
 from matplotlib.ticker import NullFormatter
 sns.set_theme(style='ticks',context='paper',font='Liberation Sans',font_scale=1.05); pal=sns.color_palette('colorblind')
 O=json.load(open('p8.json')); D,X=O['dev'],O['ext']
-lvt=pd.read_excel('../data_private/thinh_deid.xlsx'); lvt.columns=[c.strip() for c in lvt.columns]
-G=lvt['Định lượng Glucose [Máu]'].values.astype(float); A=lvt['Định lượng HbA1c [Máu]'].values.astype(float)
+lvt=pd.read_excel('../data_private/thinh_deid.xlsx')
+G=lvt['glucose_mg_dl'].values.astype(float); A=lvt['hba1c_pct'].values.astype(float)
 def tag(a,t): a.set_title(t,loc='left',fontweight='bold',fontsize=13)
 # ---- Figure 1: development at LVT
 fig,ax=plt.subplots(1,3,figsize=(12,4.2)); a,b,c=ax; x=np.linspace(70,450,100)

@@ -50,7 +50,7 @@ The summary results (`code/*.json`) are included, together with the rendered PNG
 
 ## Notes
 - Le Van Thinh dates: in the first extraction (Sep–Nov 2025) Excel stored day and month swapped; `analysis.py` corrects this (checked against the sample IDs). Study period: 2025-09 to 2026-03.
-- Ethics: approved by the Ethics Committee in Biomedical Research of Van Lang University (No. 07/2026/HĐĐĐ-IRB-VN01.078, 4 February 2026); informed consent waived (retrospective, de-identified data).
+- Ethics: approved by the Ethics Committee in Biomedical Research of Van Lang University (No. 07/2026/HDDD-IRB-VN01.078, 4 February 2026); informed consent waived (retrospective, de-identified data).
 - Parts of the analysis code were developed with the assistance of a large language model (Claude, Anthropic); all code was reviewed and run by the authors.
 
 ## Citation

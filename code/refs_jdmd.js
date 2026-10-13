@@ -14,7 +14,7 @@ Koenker:'Koenker R, Bassett G Jr. Regression quantiles. Econometrica. 1978;46(1)
 Chernozhukov:'Chernozhukov V, Fernández-Val I, Melly B. Inference on counterfactual distributions. Econometrica. 2013;81(6):2205–68. https://doi.org/10.3982/ECTA10582',
 Kolen:'Kolen MJ, Brennan RL. Test equating, scaling, and linking: methods and practices. 3rd ed. New York: Springer; 2014. https://doi.org/10.1007/978-1-4939-0317-7',
 Debray:'Debray TPA, Vergouwe Y, Koffijberg H, Nieboer D, Steyerberg EW, Moons KGM. A new framework to enhance the interpretation of external validation studies of clinical prediction models. J Clin Epidemiol. 2015;68(3):279–89. https://doi.org/10.1016/j.jclinepi.2014.06.018',
-MOH:'Ministry of Health of Vietnam. Guidelines for the diagnosis and treatment of type 2 diabetes (Decision No. 5481/QĐ-BYT, 30 December 2020). Hanoi: Ministry of Health; 2020 [in Vietnamese].',
+MOH:'Ministry of Health of Vietnam. Guidelines for the diagnosis and treatment of type 2 diabetes (Decision No. 5481/QD-BYT, 30 December 2020). Hanoi: Ministry of Health; 2020 [in Vietnamese].',
 Efron:'Efron B. Bootstrap methods: another look at the jackknife. Ann Stat. 1979;7(1):1–26. https://doi.org/10.1214/aos/1176344552',
 HermanCohen:'Herman WH, Cohen RM. Racial and ethnic differences in the relationship between HbA1c and blood glucose: implications for the diagnosis of diabetes. J Clin Endocrinol Metab. 2012;97(4):1067–72. https://doi.org/10.1210/jc.2011-1894',
 Selvin:'Selvin E, Steffes MW, Ballantyne CM, Hoogeveen RC, Coresh J, Brancati FL. Racial differences in glycemic markers: a cross-sectional analysis of community-based data. Ann Intern Med. 2011;154(5):303–9. https://doi.org/10.7326/0003-4819-154-5-201103010-00004',

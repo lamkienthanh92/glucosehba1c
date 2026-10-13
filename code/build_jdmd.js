@@ -14,9 +14,9 @@ const TB1=tbl([2570,2170,2170,2170],['Characteristic','Le Van Thinh Hospital (de
  ['HbA1c method','Turbidimetric inhibition immunoassay (DxC 700 AU)','Ion-exchange HPLC (Tosoh HLC-723GX)','NHANES laboratory method'],
  ['Age, years',mq(L.age),mq(S.age),mq(ND.age)],['Women, %',f(L.female,1),f(S.female,1),f(ND.female,1)],['Glucose, mg/dL',mq(L.glu),mq(S.glu),mq(ND.glu)],['HbA1c, %',mq(L.a1c,1),mq(S.a1c,1),mq(ND.a1c,1)],['HbA1c ≥ 7%, %',f(L.p7,1),f(S.p7,1),f(ND.p7,1)],
  ['eGFR, mL/min/1.73 m²',`${mq(L.egfr)}ᵃ`,mq(S.egfr),`${mq(ND.egfr)}ᵇ`],['eGFR < 60, %',`${f(L.egfr_lt60,1)}ᵃ`,f(S.egfr_lt60,1),`${f(ND.egfr_lt60,1)}ᵇ`],
- ['Diabetes duration < 5 / 5–10 / > 10 years, %','Not recorded',`${durP('< 5 năm')} / ${durP('5 - 10 năm')} / ${f(100*(durN('10 - 15 năm')+durN('> 15 năm'))/S.n,0)}`,`${f(nd[0],0)} / ${f(nd[1],0)} / ${f(nd[2],0)}`],
+ ['Diabetes duration < 5 / 5–10 / > 10 years, %','Not recorded',`${durP('<5 y')} / ${durP('5-10 y')} / ${f(100*(durN('10-15 y')+durN('>15 y'))/S.n,0)}`,`${f(nd[0],0)} / ${f(nd[1],0)} / ${f(nd[2],0)}`],
  ['Insulin use, %','Not recorded','Not recorded',f(ND.insulin,1)],
- ['Farmers, %','Not recorded',f(100*(S.occ['Nông dân']||0)/S.n,0),'—']]);
+ ['Farmers, %','Not recorded',f(100*(S.occ['Farmer']||0)/S.n,0),'—']]);
 const sgn=(v,d)=>sg(v,d); const dci=v=>`${sg(v[0],2)} (${f(v[1],2)} to ${f(v[2],2)})`;
 const gk=Object.keys(NG);
 const TB4a=tbl([3570,1800,1800,1900],['A. Distribution law in NHANES 2021–2023 (diagnosed diabetes)','n','Exponent β (95% CI)','G7, mg/dL (95% CI)'],[
@@ -111,7 +111,7 @@ const main=[
  PR('Analyses were performed in Python 3.12 (NumPy, pandas, SciPy, matplotlib) with fixed random seeds. A large language model (Claude, Anthropic) was used to assist in writing the analysis code, preparing figures and drafting parts of the text. All code was reviewed and run by the authors, all results were checked against the source data, and the authors take full responsibility for the content of the manuscript.'),
  H('Results'),
  H('Patients',2),
- P(`The two hospitals had similar median age, glucose and HbA1c, but Sa Dec patients more often had reduced kidney function (eGFR < 60 mL/min/1.73 m² in ${f(S.egfr_lt60,0)}% versus ${f(L.egfr_lt60,0)}% of the ${L.egfr_n} patients tested at Le Van Thinh), ${f(100*(S.occ['Nông dân']||0)/S.n,0)}% were farmers, and ${f(100*(durN('10 - 15 năm')+durN('> 15 năm'))/S.n,0)}% had had diabetes for more than 10 years (Table 1).`,{indent:true}),
+ P(`The two hospitals had similar median age, glucose and HbA1c, but Sa Dec patients more often had reduced kidney function (eGFR < 60 mL/min/1.73 m² in ${f(S.egfr_lt60,0)}% versus ${f(L.egfr_lt60,0)}% of the ${L.egfr_n} patients tested at Le Van Thinh), ${f(100*(S.occ['Farmer']||0)/S.n,0)}% were farmers, and ${f(100*(durN('10-15 y')+durN('>15 y'))/S.n,0)}% had had diabetes for more than 10 years (Table 1).`,{indent:true}),
  TC(1,'Patient characteristics at the development and external validation sites'), TB1,
  note(`Data are median (interquartile range) or %. eGFR, estimated glomerular filtration rate. ᵃ eGFR available for ${L.egfr_n} of ${L.n} patients at Le Van Thinh Hospital; percentage of those tested. eGFR by the CKD-EPI equation at all sites.`),
  H('Development at Le Van Thinh Hospital',2),
@@ -155,7 +155,7 @@ const main=[
  PL('Funding ','The authors did not receive support from any organization for the submitted work.'),
  PL('Competing interests ','The authors have no relevant financial or non-financial interests to disclose.'),
  PL('Author contributions ','Conceptualization: HQT, KTV, TKL; Methodology: HQT, KTV, TKL; Formal analysis: HQT, KTV, TKL; Visualization: HQT, KTV, TKL; Software (web tool): TKL; Investigation and data curation: LQPT, NTHT (Le Van Thinh Hospital), CHN, HTKL (Sa Dec General Hospital); Resources: LQPT, NTHT, CHN, HTKL; Writing – original draft: HQT, KTV, TKL; Writing – review and editing: all authors; Supervision and project administration: TKL. All authors read and approved the final manuscript and agree to be accountable for the work.'),
- PL('Ethics approval ','This retrospective study used de-identified data collected during routine care and was performed in line with the principles of the Declaration of Helsinki. It was approved by the Ethics Committee in Biomedical Research of Van Lang University (approval No. 07/2026/HĐĐĐ-IRB-VN01.078, dated 4 February 2026).'),
+ PL('Ethics approval ','This retrospective study used de-identified data collected during routine care and was performed in line with the principles of the Declaration of Helsinki. It was approved by the Ethics Committee in Biomedical Research of Van Lang University (approval No. 07/2026/HDDD-IRB-VN01.078, dated 4 February 2026).'),
  PL('Consent to participate ','The Ethics Committee in Biomedical Research of Van Lang University waived the requirement for informed consent because of the retrospective design and the use of de-identified routine data.'),
  PL('Consent to publish ','Not applicable; the manuscript contains no individual person’s data in any form.'),
  PL('Data availability ','The de-identified hospital data analysed in this study are not publicly available because of patient privacy and hospital regulations but are available from the corresponding author on reasonable request, subject to the approval of both hospitals.'),

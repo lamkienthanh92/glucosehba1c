@@ -9,8 +9,8 @@ def wq(x,q,w=None):
 def law(G,A,w=None): b,a=np.polyfit(np.log(wq(G,u,w)),np.log(wq(A,u,w)),1); return a,b
 G7=lambda a,b: float(np.exp((np.log(7)-a)/b))
 O=json.load(open('p8.json')); D=O['dev']
-lvt=pd.read_excel('../data_private/thinh_deid.xlsx'); lvt.columns=[c.strip() for c in lvt.columns]
-lg0=np.log(lvt['Định lượng Glucose [Máu]'].values.astype(float)); la0=np.log(lvt['Định lượng HbA1c [Máu]'].values.astype(float))
+lvt=pd.read_excel('../data_private/thinh_deid.xlsx')
+lg0=np.log(lvt['glucose_mg_dl'].values.astype(float)); la0=np.log(lvt['hba1c_pct'].values.astype(float))
 res=la0-(D['areg']+D['breg']*lg0)
 
 d=pd.read_csv('../data/nhanes_2021_2023_fasting.csv')
@@ -82,8 +82,8 @@ def bsb(G,A,B=2000):
         i=rng.integers(0,len(G),len(G)); a,b=law(G[i],A[i]); out.append((b,G7(a,b)))
     return np.array(out)
 lvtG=np.exp(lg0); lvtA=np.exp(la0)
-raw=pd.read_excel('../data_private/sadec_deid.xlsx').sort_values('NGÀY XN'); sd=raw[~raw['MÃ BN'].duplicated()]
-sdG=sd.Glucose.values*18.016; sdA=sd.Hba1c.values.astype(float)
+raw=pd.read_excel('../data_private/sadec_deid.xlsx').sort_values('test_date'); sd=raw[~raw['patient_id'].duplicated()]
+sdG=sd.glucose_mmol_l.values*18.016; sdA=sd.hba1c_pct.values.astype(float)
 bN=bsb(G,A); bL=bsb(lvtG,lvtA); bS=bsb(sdG,sdA)
 noins=fitall(*GA(T[T.DIQ050!=1]))
 ins=fitall(*GA(T[T.DIQ050==1]),B=1000)

@@ -3,18 +3,18 @@ rng=np.random.default_rng(2025)
 u=np.linspace(.02,.98,49); uu=np.linspace(.05,.95,19)
 def law(G,A): b,a=np.polyfit(np.log(np.quantile(G,u)),np.log(np.quantile(A,u)),1); return a,b
 G7=lambda a,b: float(np.exp((np.log(7)-a)/b))
-lvt=pd.read_excel('../data_private/thinh_deid.xlsx'); lvt.columns=[c.strip() for c in lvt.columns]
+lvt=pd.read_excel('../data_private/thinh_deid.xlsx')
 # Dates: text cells are dd/mm/yyyy. In the first batch (Sep-Nov 2025; the 127 records with a sample ID and E11 code),
 # Excel date cells were stored with day and month swapped (checked against the ddmmyy prefix of the sample ID).
 def _date(x,batch1):
     if isinstance(x,str): return pd.to_datetime(x.strip(),format='%d/%m/%Y')
     x=pd.Timestamp(x); return pd.Timestamp(year=x.year,month=x.day,day=x.month) if (batch1 and x.day<=12) else x
-dt=pd.Series([_date(x,b) for x,b in zip(lvt['Ngày XN'],lvt['Chẩn đoán'].notna())])
-L=dict(G=lvt['Định lượng Glucose [Máu]'].values.astype(float),A=lvt['Định lượng HbA1c [Máu]'].values.astype(float),egfr=lvt['eGFR (CKD-EPI)'].values.astype(float),
-       age=(dt.dt.year-lvt['Năm sinh']).values.astype(float),female=lvt['Giới tính'].str.strip().str.lower().eq('nữ').values,e11=lvt['Chẩn đoán'].notna().values,period=[str(dt.min().date()),str(dt.max().date())])
-raw=pd.read_excel('../data_private/sadec_deid.xlsx'); raw['NGÀY XN']=pd.to_datetime(raw['NGÀY XN']); sd=raw.sort_values('NGÀY XN'); sd=sd[~sd['MÃ BN'].duplicated()].reset_index(drop=True)
-S=dict(G=sd.Glucose.values*18.016,A=sd.Hba1c.values.astype(float),egfr=sd.eGFR.values.astype(float),age=(sd['NGÀY XN'].dt.year-sd['NĂM SINH']).values.astype(float),
-       female=sd['GIỚI TÍNH'].eq('NỮ').values,dur=sd['THỜI GIAN MẮC BỆNH ĐTĐ'].values,occ=sd['NGHỀ NGHIỆP'].values,period=[str(sd['NGÀY XN'].min().date()),str(sd['NGÀY XN'].max().date())])
+dt=pd.Series([_date(x,b) for x,b in zip(lvt['test_date'],lvt['diagnosis'].notna())])
+L=dict(G=lvt['glucose_mg_dl'].values.astype(float),A=lvt['hba1c_pct'].values.astype(float),egfr=lvt['egfr_ckdepi'].values.astype(float),
+       age=(dt.dt.year-lvt['birth_year']).values.astype(float),female=lvt['sex'].eq('F').values,e11=lvt['diagnosis'].notna().values,period=[str(dt.min().date()),str(dt.max().date())])
+raw=pd.read_excel('../data_private/sadec_deid.xlsx'); raw['test_date']=pd.to_datetime(raw['test_date']); sd=raw.sort_values('test_date'); sd=sd[~sd['patient_id'].duplicated()].reset_index(drop=True)
+S=dict(G=sd.glucose_mmol_l.values*18.016,A=sd.hba1c_pct.values.astype(float),egfr=sd.egfr_ckdepi.values.astype(float),age=(sd['test_date'].dt.year-sd['birth_year']).values.astype(float),
+       female=sd['sex'].eq('F').values,dur=sd['diabetes_duration'].values,occ=sd['occupation'].values,period=[str(sd['test_date'].min().date()),str(sd['test_date'].max().date())])
 def fitall(G,A,B=2000):
     a,b=law(G,A); bs=[]
     for _ in range(B):
@@ -42,13 +42,13 @@ lg,la=np.log(L['G']),np.log(L['A']); res=la-(dev['areg']+dev['breg']*lg)
 ext_pred,ext_obs=predict(dev['a'],dev['b'],dev['breg'],dev['areg'],res,S['G'],S['A'])
 # subgroups at Sa Dec
 sub={}
-for lab,m in [('Duration < 5 years',S['dur']=='< 5 năm'),('Duration 5–10 years',S['dur']=='5 - 10 năm'),('Duration > 10 years',np.isin(S['dur'],['10 - 15 năm','> 15 năm'])),
-              ('Women',S['female']),('Men',~S['female']),('Age < 65 years',S['age']<65),('Age ≥ 65 years',S['age']>=65),('Farmers',S['occ']=='Nông dân'),('Other occupations',S['occ']!='Nông dân'),('eGFR ≥ 60',S['egfr']>=60),('eGFR < 60',S['egfr']<60)]:
+for lab,m in [('Duration < 5 years',S['dur']=='<5 y'),('Duration 5–10 years',S['dur']=='5-10 y'),('Duration > 10 years',np.isin(S['dur'],['10-15 y','>15 y'])),
+              ('Women',S['female']),('Men',~S['female']),('Age < 65 years',S['age']<65),('Age ≥ 65 years',S['age']>=65),('Farmers',S['occ']=='Farmer'),('Other occupations',S['occ']!='Farmer'),('eGFR ≥ 60',S['egfr']>=60),('eGFR < 60',S['egfr']<60)]:
     r,_=fitall(S['G'][m],S['A'][m],B=1000); pr,ob=predict(dev['a'],dev['b'],dev['breg'],dev['areg'],res,S['G'][m],S['A'][m])
     sub[lab]=dict(n=r['n'],b=r['b'],b_ci=r['b_ci'],G7=r['G7'],G7_ci=r['G7_ci'],anch=pr['Law, anchored to local median']['p7'],unch=pr['Law, unchanged']['p7'],obs_p7=ob['obs_p7'])
 # sensitivity
 sens={}
-r,_=fitall(raw.Glucose.values*18.016,raw.Hba1c.values.astype(float),B=500); sens['Sa Dec, all 288 records']=dict(b=r['b'],b_ci=r['b_ci'],G7=r['G7'],G7_ci=r['G7_ci'])
+r,_=fitall(raw.glucose_mmol_l.values*18.016,raw.hba1c_pct.values.astype(float),B=500); sens['Sa Dec, all 288 records']=dict(b=r['b'],b_ci=r['b_ci'],G7=r['G7'],G7_ci=r['G7_ci'])
 m=L['e11']; r,_=fitall(L['G'][m],L['A'][m],B=500); sens['Le Van Thinh, E11 coded only']=dict(n=r['n'],b=r['b'],b_ci=r['b_ci'],G7=r['G7'],G7_ci=r['G7_ci'])
 m=~(L['egfr']<60); r,_=fitall(L['G'][m],L['A'][m],B=500); sens['Le Van Thinh, eGFR ≥ 60 or missing']=dict(n=r['n'],b=r['b'],b_ci=r['b_ci'],G7=r['G7'],G7_ci=r['G7_ci'])
 # anchoring sample size at Sa Dec

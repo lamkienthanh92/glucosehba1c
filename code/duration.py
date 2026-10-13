@@ -1,13 +1,13 @@
 import numpy as np, pandas as pd, json
 rng=np.random.default_rng(8)
 O=json.load(open('p8.json')); D=O['dev']
-raw=pd.read_excel('../data_private/sadec_deid.xlsx').sort_values('NGÀY XN'); sd=raw[~raw['MÃ BN'].duplicated()].reset_index(drop=True)
-G=sd.Glucose.values*18.016; A=sd.Hba1c.values.astype(float); dur=sd['THỜI GIAN MẮC BỆNH ĐTĐ'].values
-lvt=pd.read_excel('../data_private/thinh_deid.xlsx'); lvt.columns=[c.strip() for c in lvt.columns]
-lg,la=np.log(lvt['Định lượng Glucose [Máu]'].values.astype(float)),np.log(lvt['Định lượng HbA1c [Máu]'].values.astype(float)); res=la-(D['areg']+D['breg']*lg)
+raw=pd.read_excel('../data_private/sadec_deid.xlsx').sort_values('test_date'); sd=raw[~raw['patient_id'].duplicated()].reset_index(drop=True)
+G=sd.glucose_mmol_l.values*18.016; A=sd.hba1c_pct.values.astype(float); dur=sd['diabetes_duration'].values
+lvt=pd.read_excel('../data_private/thinh_deid.xlsx')
+lg,la=np.log(lvt['glucose_mg_dl'].values.astype(float)),np.log(lvt['hba1c_pct'].values.astype(float)); res=la-(D['areg']+D['breg']*lg)
 a_law=np.log(np.median(A))-D['b']*np.log(np.median(G))
 pr=np.exp((D['areg']+D['breg']*np.log(G))[:,None]+res[None,:]).ravel(); a_reg=D['areg']+np.log(np.median(A))-np.log(np.median(pr))
-cats=[('< 5 năm','< 5 years'),('5 - 10 năm','5–10 years'),('10 - 15 năm','10–15 years'),('> 15 năm','> 15 years')]; rows=[]
+cats=[('<5 y','< 5 years'),('5-10 y','5–10 years'),('10-15 y','10–15 years'),('>15 y','> 15 years')]; rows=[]
 for c,lab in cats:
     m=dur==c; g,a=G[m],A[m]; law=np.exp(a_law+D['b']*np.log(g)); rg=np.exp((a_reg+D['breg']*np.log(g))[:,None]+res[None,:]).ravel()
     rows.append(dict(group=lab,n=int(m.sum()),medG=float(np.median(g)),dG=float((np.median(g)/np.median(G)-1)*100),medA=float(np.median(a)),law_med=float(np.median(law)-np.median(a)),reg_med=float(np.median(rg)-np.median(a)),law_p7=float(np.mean(law>=7)*100-np.mean(a>=7)*100),reg_p7=float(np.mean(rg>=7)*100-np.mean(a>=7)*100)))

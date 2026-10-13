@@ -3,10 +3,10 @@ rng=np.random.default_rng(88)
 u=np.linspace(.02,.98,49)
 def law(G,A): b,a=np.polyfit(np.log(np.quantile(G,u)),np.log(np.quantile(A,u)),1); return a,b
 G7=lambda a,b: np.exp((np.log(7)-a)/b)
-lvt=pd.read_excel('../data_private/thinh_deid.xlsx'); lvt.columns=[c.strip() for c in lvt.columns]
-Gl=lvt['Định lượng Glucose [Máu]'].values.astype(float); Al=lvt['Định lượng HbA1c [Máu]'].values.astype(float)
-raw=pd.read_excel('../data_private/sadec_deid.xlsx').sort_values('NGÀY XN'); sd=raw[~raw['MÃ BN'].duplicated()].reset_index(drop=True)
-Gs=sd.Glucose.values*18.016; As=sd.Hba1c.values.astype(float); dur=sd['THỜI GIAN MẮC BỆNH ĐTĐ'].values
+lvt=pd.read_excel('../data_private/thinh_deid.xlsx')
+Gl=lvt['glucose_mg_dl'].values.astype(float); Al=lvt['hba1c_pct'].values.astype(float)
+raw=pd.read_excel('../data_private/sadec_deid.xlsx').sort_values('test_date'); sd=raw[~raw['patient_id'].duplicated()].reset_index(drop=True)
+Gs=sd.glucose_mmol_l.values*18.016; As=sd.hba1c_pct.values.astype(float); dur=sd['diabetes_duration'].values
 Gp=np.r_[Gl,Gs]; Ap=np.r_[Al,As]   # pooled non-tertiary data as the sampling frame
 NS=[50,100,150,200,300,400,600,800,1000]; out={'calib':[],'transfer':[],'slope':[]}
 # 1) precision of beta and G7 as a function of development sample size
@@ -22,7 +22,7 @@ for n in NS:
         aa=np.log(np.median(As[j]))-b*np.log(np.median(Gs)); e.append(abs(np.mean(np.exp(aa+b*np.log(Gs))>=7)-o7)*100)
     out['transfer'].append(dict(n=n,med=float(np.median(e)),p90=float(np.percentile(e,90))))
 # 3) power to distinguish between-group slope (duration groups): SE as function of n (scaled resampling of Sa Dec)
-cats=['< 5 năm','5 - 10 năm','10 - 15 năm','> 15 năm']
+cats=['<5 y','5-10 y','10-15 y','>15 y']
 def slope(G,A,dd):
     x=[np.log(np.median(G[dd==c])) for c in cats]; y=[np.log(np.median(A[dd==c])) for c in cats]; return np.polyfit(x,y,1)[0]
 for n in [279,600,1000,1500,2000,3000]:
