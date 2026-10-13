@@ -8,8 +8,18 @@ HbA1c(u) = e^α × glucose(u)^β
 
 It is derived in 229 outpatients with type 2 diabetes at Le Van Thinh Hospital (Ho Chi Minh City) and validated in 279 outpatients at Sa Dec General Hospital (Dong Thap) and in 391 adults with diagnosed diabetes in NHANES August 2021–August 2023 (fasting subsample). Once anchored with a few local HbA1c values, the law predicts the HbA1c distribution of groups for which only glucose is available.
 
+## Web tool
+`index.html` (English) maps a population's glucose distribution to its expected HbA1c distribution by percentile.
+- **Exponent β**: fitted to the user's own glucose and HbA1c values, or taken from a reference population (Le Van Thinh Hospital, Sa Dec General Hospital, NHANES 2021–2023).
+- **Position**: anchored to the median of the user's HbA1c values (recommended), the user's own fit, or the reference position.
+- **Uncertainty**: bootstrap 95% CIs for every output (reference bootstrap draws combined with resampling of the user's data) and sample-size ratings for the glucose sample, the own fit and the anchor.
+- **Output**: percentile map (P5–P95) and share above an HbA1c threshold, never single glucose-to-HbA1c conversions for individuals.
+
+Example data can be loaded for each reference: NHANES 2021–2023 as the actual public values; the two hospitals as values reconstructed from their glucose and HbA1c percentiles (same distributions and law, not patient records, unpaired). A comparison table shows the results for the user's data under each β source. Hospital references are otherwise embedded only as aggregated summaries (49 percentiles and 500 bootstrap estimates of α and β); no hospital records are included. User data are processed in the browser only. Deployed on Netlify (`netlify.toml`). Research use only, not for diagnosis or treatment decisions.
+
 ## Repository structure
 ```
+index.html web tool
 code/      analysis, figure and manuscript-building scripts (run from this folder)
            *.json = summary results (no individual-level data)
 data/      NHANES 2021–2023 fasting extract (public domain)
