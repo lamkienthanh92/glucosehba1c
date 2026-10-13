@@ -21,4 +21,5 @@ Selvin:'Selvin E, Steffes MW, Ballantyne CM, Hoogeveen RC, Coresh J, Brancati FL
 Little:'Little RR, Rohlfing CL, Sacks DB. Status of hemoglobin A1c measurement and goals for improvement: from chaos to order for improving diabetes care. Clin Chem. 2011;57(2):205–14. https://doi.org/10.1373/clinchem.2010.148841',
 Smith:'Smith RJ. Use and misuse of the reduced major axis for line-fitting. Am J Phys Anthropol. 2009;140(3):476–86. https://doi.org/10.1002/ajpa.21090',
 NHANES:'National Center for Health Statistics. National Health and Nutrition Examination Survey, August 2021–August 2023: data, documentation and codebooks. Hyattsville, MD: Centers for Disease Control and Prevention. https://wwwn.cdc.gov/nchs/nhanes/continuousnhanes/default.aspx?Cycle=2021-2023. Accessed 12 Oct 2026.',
+Zenodo:'Lam TK. Glucose–HbA1c distribution law: analysis code and web tool (Le Van Thinh Hospital, Sa Dec General Hospital, NHANES 2021–2023). Version 1.0.0 [software]. Zenodo; 2026. https://doi.org/10.5281/zenodo.23330009',
 };

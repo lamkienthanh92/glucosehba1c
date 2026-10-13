@@ -1,6 +1,14 @@
 cff-version: 1.2.0
 message: "If you use this code, please cite it as below."
-title: "A glucose–HbA1c distribution law for monitoring glycaemic control in diabetes: analysis code"
+title: "Glucose–HbA1c distribution law: analysis code and web tool (Le Van Thinh Hospital, Sa Dec General Hospital, NHANES 2021–2023)"
+authors:
+  - family-names: Lam
+    given-names: Thanh Kien
+    email: thanh.lk@vlu.edu.vn
+    affiliation: "Faculty of Medical Technology, Van Lang University"
+version: 1.2.0
+message: "If you use this code, please cite it as below."
+title: "Glucose–HbA1c distribution law: analysis code and web tool (Le Van Thinh Hospital, Sa Dec General Hospital, NHANES 2021–2023)"
 authors:
   - family-names: Tran
     given-names: Huy Quoc
@@ -19,5 +27,7 @@ authors:
     email: thanh.lk@vlu.edu.vn
     affiliation: "Faculty of Medical Technology, Van Lang University"
 version: 1.0.0
+doi: 10.5281/zenodo.23330009
+url: "https://glucosehba1c.netlify.app"
 date-released: 2026-10-13
 license: MIT

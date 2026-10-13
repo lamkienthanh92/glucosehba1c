@@ -120,6 +120,16 @@ footer{color:var(--muted);font-size:.83rem;margin-top:10px}
     <div id="posList" role="radiogroup" aria-label="Position of the law"></div>
     <div class="btns"><button class="primary" id="run" type="button">Map distribution</button></div>
   </section>
+
+  <section class="card" aria-labelledby="s4">
+    <h2 id="s4"><b>4</b>Look up a glucose value</h2>
+    <p class="small">Enter a glucose value to see where it lies in your glucose distribution and the HbA1c value at the <strong>same percentile</strong> under the law in use. This is a rank equivalent within the population, not a prediction of one person’s HbA1c.</p>
+    <div class="row" style="grid-template-columns:1fr auto;align-items:end">
+      <div><label class="lb" for="gOne">Glucose (<span id="gOneU">mg/dL</span>)</label><input id="gOne" type="number" inputmode="decimal" step="any" placeholder="e.g. 140"></div>
+      <button class="primary" id="look" type="button">Look up</button>
+    </div>
+    <div id="lookOut"></div>
+  </section>
 </div>
 
 <div>
@@ -183,7 +193,7 @@ function rateGlu(n){if(n<50)return['b-bad','Insufficient'];if(n<150)return['b-wa
 for(const k of RKEYS){const r=REF[k];const bs=r.boot.map(x=>x[1]),gs=r.boot.map(x=>gEq(x[0],x[1],7));r.bci=ci(bs);r.gci=ci(gs);r.G7=gEq(r.a,r.b,7);}
 
 /* ---------- inputs ---------- */
-let SRC='lvt',POS='anchor',POS_USER=false;
+let SRC='lvt',POS='anchor',POS_USER=false,LAST=null;
 function data(){const uG=$('uG').value,uA=$('uA').value;
   const G=parseList($('gTxt').value).map(v=>toMg(v,uG)).filter(v=>v>20&&v<1500);
   const A=parseList($('aTxt').value).map(v=>toPct(v,uA)).filter(v=>v>3&&v<20);return{G,A};}
@@ -227,14 +237,14 @@ function compute(src,pos,lG,lA,T,B){
   const U=useOwn?grid(Math.min(lG.length,lA.length)):null;let a0,b0;
   if(useOwn){const o=fitSorted(sLG,sorted(lA),U);a0=o.a;b0=o.b;}
   else{b0=REF[src].b;a0=anchor?q7(sorted(lA),.5)-b0*q7(sLG,.5):REF[src].a;}
-  const bq=PCTS.map(()=>[]),bsh=[],bb=[],bg=[],bmed=[];
+  const bq=PCTS.map(()=>[]),bsh=[],bb=[],bg=[],ba=[];
   for(let k=0;k<B;k++){const sG=resample(lG,r);let ab,bk;
     if(useOwn){const sA=resample(lA,r);const o=fitSorted(sG,sA,U);ab=o.a;bk=o.b;}
     else{const d=REF[src].boot[k%REF[src].boot.length];bk=d[1];if(anchor){const sA=resample(lA,r);ab=q7(sA,.5)-bk*q7(sG,.5);}else ab=d[0];}
-    bb.push(bk);bg.push(gEq(ab,bk,T));PCTS.forEach((p,i)=>bq[i].push(Math.exp(ab+bk*q7(sG,p))));
+    bb.push(bk);ba.push(ab);bg.push(gEq(ab,bk,T));PCTS.forEach((p,i)=>bq[i].push(Math.exp(ab+bk*q7(sG,p))));
     let c=0;const lt=Math.log(T);for(let i=0;i<sG.length;i++)if(ab+bk*sG[i]>=lt)c++;bsh.push(c/sG.length*100);}
   let c=0;for(const x of lG)if(a0+b0*x>=Math.log(T))c++;
-  return{a0,b0,bq,bsh,bb,bg,share:c/lG.length*100,sci:ci(bsh),med:Math.exp(a0+b0*q7(sLG,.5)),medci:ci(bq[3])};
+  return{a0,b0,bq,bsh,bb,ba,bg,share:c/lG.length*100,sci:ci(bsh),med:Math.exp(a0+b0*q7(sLG,.5)),medci:ci(bq[3])};
 }
 function run(){
   const {G,A}=data();const out=$('out');const T=Math.min(14,Math.max(4,num($('tgt').value)||7)),B=+$('B').value;
@@ -242,6 +252,7 @@ function run(){
   const lG=G.map(Math.log),lA=A.map(Math.log),sLG=sorted(lG);
   const useOwn=SRC==='own',anchor=POS==='anchor';
   const C=compute(SRC,POS,lG,lA,T,B);const {a0,b0,bq,bb,bg,bsh}=C;
+  LAST={a0,b0,ba:C.ba,bb,sLG,lA,src:SRC,pos:POS,T};$('lookOut').innerHTML='';if($('gOne').value)lookup();
   // own fit for comparison table
   let ownSum=null;
   if(A.length>=20){const Uo=grid(Math.min(G.length,A.length)),o=fitSorted(sLG,sorted(lA),Uo),r2=rng(9),ob=[],og=[];
@@ -313,6 +324,22 @@ function plot(a0,b0,bb,sLG,A,useOwn,anchor){
   <div class="legend"><span><i style="background:var(--a1c);height:4px"></i>Law in use</span>${RKEYS.map(k=>`<span><i style="background:${RCOL[k]}"></i>${esc(REF[k].name)}</span>`).join('')}${A.length>=20?'<span><i style="background:var(--a1c);opacity:.55;height:7px;width:7px;border-radius:50%"></i>Your percentiles</span>':''}</div>`;
 }
 
+function lookup(){
+  const o=$('lookOut'),uG=$('uG').value,v=num($('gOne').value),g=toMg(v,uG);
+  if(!LAST){o.innerHTML='<div class="note n-info">Press <em>Map distribution</em> first, so that the law and its uncertainty are defined for your population.</div>';return;}
+  if(!(g>20&&g<1500)){o.innerHTML='<div class="note n-bad">Enter a glucose value between 20 and 1500 mg/dL (1.1–83 mmol/L).</div>';return;}
+  const {a0,b0,ba,bb,sLG,T}=LAST,lg=Math.log(g);
+  let below=0;for(const x of sLG)if(x<lg)below++;const pr=below/sLG.length*100;
+  const est=Math.exp(a0+b0*lg),c=ci(ba.map((a,i)=>Math.exp(a+bb[i]*lg)));
+  const lo=Math.exp(sLG[0]),hi=Math.exp(sLG[sLG.length-1]),out=g<lo||g>hi;
+  o.innerHTML=`<div class="kpis" style="margin-top:12px">
+      <div class="kpi"><span>Percentile of ${f(g,0)} mg/dL in your glucose distribution</span><strong>P${f(pr,0)}</strong><em>${f(pr,1)}% of your glucose values are lower (n = ${sLG.length.toLocaleString()})</em></div>
+      <div class="kpi"><span>HbA1c at the same percentile</span><strong style="color:var(--a1c)">${f(est,2)}%</strong><em>95% CI ${f(c[0],2)}–${f(c[1],2)}% · ${est>=T?'at or above':'below'} the ${f(T,1)}% threshold</em></div>
+    </div>
+    ${out?`<div class="note n-warn">This value lies outside the range of your glucose data (${f(lo,0)}–${f(hi,0)} mg/dL); the result is an extrapolation of the law.</div>`:''}
+    ${sLG.length<50?`<div class="note n-warn">Your glucose distribution has fewer than 50 values, so the percentile is imprecise.</div>`:''}
+    <p class="small">Interpretation: in a population like yours, a glucose value at P${f(pr,0)} corresponds to an HbA1c value at P${f(pr,0)} of the HbA1c distribution, about ${f(est,2)}%. Individual HbA1c values at this glucose level vary widely around this figure. The interval reflects uncertainty in the law (β ${f(b0,3)}${LAST.src==='own'?', fitted to your data':', '+esc(REF[LAST.src].name)}${LAST.pos==='anchor'?', anchored to your HbA1c':''}), not between-person variation.</p>`;
+}
 /* ---------- file input ---------- */
 let TABLE=null;
 function parseRows(t){const L=t.split(/\r?\n/).filter(l=>l.trim()!=='');if(!L.length)return[];const d=L[0].includes('\t')?'\t':(L[0].split(';').length>L[0].split(',').length?';':',');return L.map(l=>l.split(d).map(c=>c.trim().replace(/^"|"$/g,'')));}
@@ -346,6 +373,8 @@ $('clear').addEventListener('click',()=>{['gTxt','aTxt'].forEach(i=>$(i).value='
 let tmr;function refresh(){clearTimeout(tmr);tmr=setTimeout(()=>{renderControls();},150);}
 ['gTxt','aTxt'].forEach(i=>$(i).addEventListener('input',refresh));['uG','uA'].forEach(i=>$(i).addEventListener('change',refresh));
 $('run').addEventListener('click',run);
+$('look').addEventListener('click',lookup);$('gOne').addEventListener('keydown',e=>{if(e.key==='Enter')lookup();});
+$('uG').addEventListener('change',()=>{$('gOneU').textContent=$('uG').value==='mmol'?'mmol/L':'mg/dL';});
 $('theme').addEventListener('click',()=>{const r=document.documentElement;const d=r.dataset.theme?r.dataset.theme==='dark':matchMedia('(prefers-color-scheme: dark)').matches;r.dataset.theme=d?'light':'dark';});
 renderControls();renderRefTable(null);
 </script>

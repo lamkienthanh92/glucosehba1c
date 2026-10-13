@@ -1,5 +1,7 @@
 # A glucose–HbA1c distribution law for monitoring glycaemic control in diabetes
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23330009.svg)](https://doi.org/10.5281/zenodo.23330009) · Web tool: https://glucosehba1c.netlify.app
+
 Analysis code for the manuscript *"A glucose–HbA1c distribution law for monitoring glycaemic control in diabetes: development at a Vietnamese district hospital and external validation in Vietnam and the United States"* (submitted).
 
 The law links the **distributions** of fasting plasma glucose and HbA1c by matching their quantiles:
@@ -13,7 +15,8 @@ It is derived in 229 outpatients with type 2 diabetes at Le Van Thinh Hospital (
 - **Exponent β**: fitted to the user's own glucose and HbA1c values, or taken from a reference population (Le Van Thinh Hospital, Sa Dec General Hospital, NHANES 2021–2023).
 - **Position**: anchored to the median of the user's HbA1c values (recommended), the user's own fit, or the reference position.
 - **Uncertainty**: bootstrap 95% CIs for every output (reference bootstrap draws combined with resampling of the user's data) and sample-size ratings for the glucose sample, the own fit and the anchor.
-- **Output**: percentile map (P5–P95) and share above an HbA1c threshold, never single glucose-to-HbA1c conversions for individuals.
+- **Output**: percentile map (P5–P95) and share above an HbA1c threshold.
+- **Look-up**: a single glucose value is placed in the user's glucose distribution (percentile) and mapped to the HbA1c value at the same percentile, with a 95% CI; labelled as a rank equivalent, not an individual prediction.
 
 Example data can be loaded for each reference: NHANES 2021–2023 as the actual public values; the two hospitals as values reconstructed from their glucose and HbA1c percentiles (same distributions and law, not patient records, unpaired). A comparison table shows the results for the user's data under each β source. Hospital references are otherwise embedded only as aggregated summaries (49 percentiles and 500 bootstrap estimates of α and β); no hospital records are included. User data are processed in the browser only. Deployed on Netlify (`netlify.toml`). Research use only, not for diagnosis or treatment decisions.
 
@@ -51,7 +54,7 @@ The summary results (`code/*.json`) are included, together with the rendered PNG
 - Parts of the analysis code were developed with the assistance of a large language model (Claude, Anthropic); all code was reviewed and run by the authors.
 
 ## Citation
-See `CITATION.cff`. Corresponding author: Thanh Kien Lam, Faculty of Medical Technology, Van Lang University (thanh.lk@vlu.edu.vn).
+Lam TK. Glucose–HbA1c distribution law: analysis code and web tool. Version 1.0.0. Zenodo; 2026. https://doi.org/10.5281/zenodo.23330009 (all versions: https://doi.org/10.5281/zenodo.23330006). See also `CITATION.cff`. Corresponding author: Thanh Kien Lam, Faculty of Medical Technology, Van Lang University (thanh.lk@vlu.edu.vn).
 
 ## Licence
 Code: MIT. NHANES data: public domain. Figures: © the authors.
